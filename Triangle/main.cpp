@@ -20,8 +20,10 @@ using namespace std;
 
 int printTriangle(int layer);
 int printNumTriangle(int layer);
+int cppVersion();
 
 int main() {
+    cout << "The Current Cpp Version:" << __cplusplus << endl;
     int layer, ntype;
     cout << "Select the Type:";
     cin >> ntype;
@@ -78,4 +80,5 @@ int printNumTriangle(int layer){
         }
     return 0;
     }
+
 
