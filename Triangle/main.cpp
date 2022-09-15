@@ -1,5 +1,7 @@
 /**
  * This program outputs a triangle.
+ * ntype=1 for a star filled  triangle;
+ * ntype=2 for a number surrounded triangle.
  */
 
 #include <iostream>
