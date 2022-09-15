@@ -1,5 +1,5 @@
 /**
- * This program outputs a triangle.
+ * This program prints the cpp compiler version and outputs a triangle;
  * ntype=1 for a star filled  triangle;
  * ntype=2 for a number surrounded triangle.
  */
