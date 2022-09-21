@@ -1,0 +1,70 @@
+
+Perfect Numbers
+---------------
+
+Before submitting this file, make sure that there are no more TODO
+placeholders remaining in the file (and remove this comment too).
+
+Q1. Roughly how long did it take your computer to do the search? How many perfect numbers were found and what were they?
+A1. It takes about 3s to do the search. 4 perfect numbers were found including 6, 28, 496 and 8128.
+
+Q2. Record the timing results for `findPerfects` that you observed into a table.
+A2. Table of timing results：
+    size    time(s)
+    26250   1.11
+    52500   3.95
+    105000  15.19
+    210000  60.10
+
+Q3. Does it take the same amount of work to compute `isPerfect` on the number 10 as it does on the number 1000? Why or why not? Does it take the same amount of work for `findPerfects` to search the range of numbers from 1-1000 as it does to search the numbers from 1000-2000? Why or why not?
+A3. 1)No, their called fucntion 'divisorSum' need to do 10 and 1000 dividing computations, respectively, to find all their divisors.
+    2)No, they both need 1000 searchs, but with the number growes, the innner called function 'isPerfect' takes more work.
+
+Q4. Extrapolate from the data you gathered and make a prediction: how long will it take `findPerfects` to reach the fifth perfect number?
+A4. From the table lsited in A2，as the size doubles, the time becomes 4 times as before.
+    Therefore, given the fifth number 33550336，this program takes roughly 60.10*4^(log2(33550036/210000))=1534000 s=426 h.
+
+Q5. Do any of the tests still pass even with this broken function? Why or why not?
+A5. Yes. Some numbers like 12 and 98765 don't even meet the requirement of this broken funtion.
+    And TIME_OPERATION tests do not examine the correctness of a function, intsead it simply evaluate the executinf time.
+    Therefore some tests still pass even with broken function.
+
+Q6. Describe the testing strategy you used for your test cases to confirm `smarterSum` is working correctly.
+A6. Using perfect number 25 and its surrrounding numbers 24, 26 to confirm function sqrt() and the whole logic is working corrrectly.
+    Using 0 and 1 to test the special cases.
+
+Q7. Record your timing results for `findPerfectsSmarter` into a table.
+A7. Table of timing results with findPerfectsSmarter
+    size        time(s)
+    375000      3.27
+    750000      8.68
+    1500000     22.94
+    3000000     61.77
+Q8. Make a prediction: how long will `findPerfectsSmarter` take to reach the fifth perfect number?
+A8. It roughly takes (33550036/3000000)^(3/2)*61.777 = 2310 s = 38 min.
+
+Q9. Explain how you chose your specific test cases and why they lead you to be confident `findNthPerfectEuclid` is working correctly.
+A9. Compare the perfect numbers found by findNthPerfectEuclid with that of the already tested fucntion findPerfectsSmarter.
+
+Soundex
+-------
+
+Q10. What is the Soundex code for "Angelou"? What is the code for your own surname?
+A10. The Code for "Angelou" is A524. The code for my own name "Jin Da" is J530.
+
+Q11. Before writing any code, brainstorm your plan of attack and sketch how you might decompose the work into smaller tasks. Briefly describe your decomposition strategy.
+A11. 1. Use a function to remove all the nonletters in the name.
+     2. Use a function to encode the letters to numbers.
+     3. Use a function to merge adjacent equal numbers.
+     4. Use a function to replace the first digit with the first letter of surname in upper form.
+     5. Use a function to removes all the '0' digits.
+     6. Use a funtion to keep the final length to 4 by adding '0' or cuuting the extraneous digits.
+
+
+Q12. Think about one or more examples of a class of names that the Soundex system might not work well for. Explain what this class of names is and why the system might incorrectly group them or mis-categorize one of the names.
+A12.
+
+Q13. Suppose you are a software engineer working for the U.S. government. You have been tasked with implementing a system that collects names as part of the Census survey and analyzes these names using a phonetic algorithm. Your boss suggests using Soundex and notes that the algorithm is only expected to work for ASCII-encoded strings, since supporting Unicode would require extra work and time. What would your response be and why? What representational harms might result from building a system that exclusively uses Soundex and/or ASCII?
+A13.
+
+
