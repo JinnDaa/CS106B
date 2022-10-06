@@ -73,7 +73,7 @@ Queue<int> naiveMultiMerge(Vector<Queue<int>>& all) {
  * This function receives a Vector of sorted Queues and merge them
  * in a recursive way.
  */
-Queue<int> recMultiMerge(Vector<Queue<int>> all) {
+Queue<int> recMultiMerge(Vector<Queue<int>>& all) {
     //base case
     if(all.size() == 0){ //handle empty input
         return {};
@@ -86,8 +86,10 @@ Queue<int> recMultiMerge(Vector<Queue<int>> all) {
     }
     else{
         int midIndex = all.size() / 2;
+        Vector<Queue<int>> front = all.subList(0, midIndex);
+        Vector<Queue<int>> back = all.subList(midIndex, all.size() - midIndex);
         // separate all into two parts, merge each part and finally combine the two parts.
-        return binaryMerge(recMultiMerge(all.subList(0, midIndex)), recMultiMerge(all.subList(midIndex, all.size() - midIndex)));
+        return binaryMerge(recMultiMerge(front), recMultiMerge(back));
     }
 }
 

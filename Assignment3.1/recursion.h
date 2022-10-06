@@ -27,6 +27,6 @@ void runInteractiveDemo();
 
 Queue<int> binaryMerge(Queue<int> a, Queue<int> b);
 Queue<int> naiveMultiMerge(Vector<Queue<int>>& all);
-Queue<int> recMultiMerge(Vector<Queue<int>> all);
+Queue<int> recMultiMerge(Vector<Queue<int>>& all);
 bool sortedCheck(Queue<int>);
 
