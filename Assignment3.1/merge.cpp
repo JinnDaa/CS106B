@@ -1,8 +1,5 @@
 /*
- * TODO: remove and replace this file header comment
- * You will edit and turn in this file.
- * Remove starter comments and add your own
- * comments on each function and on complex code sections.
+ * This cpp file merges two or more sorted sequences into a new Queue.
  */
 #include <iostream>    // for cout, endl
 #include "queue.h"
