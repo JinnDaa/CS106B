@@ -28,5 +28,7 @@ void runInteractiveDemo();
 Queue<int> binaryMerge(Queue<int> a, Queue<int> b);
 Queue<int> naiveMultiMerge(Vector<Queue<int>>& all);
 Queue<int> recMultiMerge(Vector<Queue<int>>& all);
+Queue<int> recMultiMergeWrap(Vector<Queue<int>>& all, int start, int end);
+Queue<int> recMultiMergeWrap(Vector<Queue<int>>& all, Queue<int>& sofar, int& index);
 bool sortedCheck(Queue<int>);
 

@@ -73,6 +73,34 @@ Queue<int> naiveMultiMerge(Vector<Queue<int>>& all) {
  * This function receives a Vector of sorted Queues and merge them
  * in a recursive way.
  */
+#define version_c
+
+#ifdef version_a
+// This version uses the same algorithm with naiveMultiMerge but in a recursive way.
+// It is easy to encounter stack overflow with large n(the size of all).
+// Tts efficiency approximately equals that of naiveMultiMerge.
+Queue<int> recMultiMergeWrap(Vector<Queue<int>>& all, Queue<int>& sofar, int& index) {
+    //base case
+    if(index == all.size()){
+        return sofar;
+    }
+    else{
+        sofar = binaryMerge(sofar, all[index]);
+        index += 1;
+        return recMultiMergeWrap(all, sofar, index);
+    }
+}
+
+Queue<int> recMultiMerge(Vector<Queue<int>>& all) {
+    Queue<int> sofar = {};
+    int index = 0;
+    return recMultiMergeWrap(all, sofar, index);
+}
+
+#endif
+
+#ifdef version_b
+// This version employs a divide and conquer algorithm and recursively merges the Queues.
 Queue<int> recMultiMerge(Vector<Queue<int>>& all) {
     //base case
     if(all.size() == 0){ //handle empty input
@@ -80,9 +108,6 @@ Queue<int> recMultiMerge(Vector<Queue<int>>& all) {
     }
     else if(all.size() == 1){
         return all[0];
-    }
-    else if(all.size() == 2){
-        return binaryMerge(all[0], all[1]);
     }
     else{
         int midIndex = all.size() / 2;
@@ -92,10 +117,34 @@ Queue<int> recMultiMerge(Vector<Queue<int>>& all) {
         return binaryMerge(recMultiMerge(front), recMultiMerge(back));
     }
 }
+#endif
 
+#ifdef version_c
+// This version avoids the use of subList whose time complexity is O(N)
+Queue<int> recMultiMergeWrap(Vector<Queue<int>>& all, int start, int end){
+    //base case
+    if(start == end){
+        return all[start];
+    }
+    else
+        {
+            int mid = (start + end) / 2;
+            return binaryMerge(recMultiMergeWrap(all, start, mid), recMultiMergeWrap(all, mid + 1, end));
+        }
+}
 
+Queue<int> recMultiMerge(Vector<Queue<int>>& all){
+    //handle empty input
+    if(all.isEmpty()){
+        return {};
+    }
+    int start = 0;
+    int end = all.size() - 1;
+    return recMultiMergeWrap(all, start, end);
+}
 /* * * * * * Test Cases * * * * * */
 
+#endif
 Queue<int> createSequence(int size);
 void distribute(Queue<int> input, Vector<Queue<int>>& all);
 
@@ -197,6 +246,26 @@ STUDENT_TEST("recMultiMerge, with empty queues to be merged") {
     Vector<Queue<int>> all = {{}, {}, {}};
     Queue<int> expected = {};
     EXPECT_EQUAL(naiveMultiMerge(all), expected);
+}
+
+STUDENT_TEST("Time recMultiMerge operation keeping k fixed") {
+    int k = 500;
+    for(int n = 500; n <= 200000; n = 2*n){
+        Queue<int> input = createSequence(n);
+        Vector<Queue<int>> all(k);
+        distribute(input, all);
+        TIME_OPERATION(input.size(), recMultiMerge(all));
+    }
+}
+
+STUDENT_TEST("Time recMultiMerge operation keeping n fixed") {
+    int n = 100000;
+    for(int k = 10; k <= 100000; k = 10*k){
+        Queue<int> input = createSequence(n);
+        Vector<Queue<int>> all(k);
+        distribute(input, all);
+        TIME_OPERATION(k, recMultiMerge(all));
+    }
 }
 
 /* Test helper to fill queue with sorted sequence */
