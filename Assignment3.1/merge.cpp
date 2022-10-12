@@ -117,7 +117,7 @@ Queue<int> recMultiMerge(Vector<Queue<int>>& all) {
 #endif
 
 #ifdef version_c
-// This version avoids the use of subList whose time complexity is O(N)
+// This version avoids the use of subList whose time complexity is O(N).
 Queue<int> recMultiMergeWrap(Vector<Queue<int>>& all, int start, int end){
     //base case
     if(start == end){
