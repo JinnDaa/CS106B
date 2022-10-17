@@ -22,6 +22,11 @@ int sumOfVector(Vector<int>& vec, int low, int high){
     }
 }
 
+#define version_backtrack
+
+
+
+#ifdef version_dfs
 
 // This function judges if a given block is a key vote of a given coalition.
 bool checkKeyVoteb(int iTargetBlock, int& sofarSum, Vector<int>& blocks, int total){
@@ -32,7 +37,6 @@ bool checkKeyVoteb(int iTargetBlock, int& sofarSum, Vector<int>& blocks, int tot
     return false;
 }
 
-// This version avoids stroring the sofar Vector.
 void computePowerIndexesRec(Vector<int>& blocks, int index, int iTargetBlock, int sofarSum, Vector<int>& result, int& total){
     //1 base case: a coalition is formed, calculate the total votes
     if(index == blocks.size()){
@@ -62,6 +66,7 @@ void computePowerIndexesRec(Vector<int>& blocks, int index, int iTargetBlock, in
 
 // This function receives a int Vector representing blocks and returns
 // a Vector containing the power index of each block.
+// More importantly, this version avoids stroring the sofar Vector.
 Vector<int> computePowerIndexes(Vector<int>& blocks)
 {
     Vector<int> result(blocks.size(), 0);
@@ -96,6 +101,89 @@ Vector<int> computePowerIndexes(Vector<int>& blocks)
     }
     return result;
 }
+#endif
+
+#ifdef version_backtrack
+// This version uses backtracking alogorithm
+
+// This function judges if a given block is a key vote of a given coalition.
+bool checkKeyVoteb(int iTargetBlock, int& sofarSum, Vector<int>& blocks, int total, int inludeChecker){
+    if(inludeChecker == 0)
+        return false;
+    if(float(sofarSum - blocks[iTargetBlock]) <= total * 1.0 / 2.0
+            && float(sofarSum) > total * 1.0 / 2.0){
+        return true;
+    }
+    return false;
+}
+
+// In this version, a coalition is formed everytime index moves forward and does not have to reach the end of block.
+// As a result, it might include some coaltions that does not have target block in it, which need to be removed.(by includeChecker)
+void computePowerIndexesRec(Vector<int>& blocks, int index, int iTargetBlock, int sofarSum, int inludeChecker, Vector<int>& result, int& total){
+    //1 base case: a coalition is formed, calculate the total votes
+        if(checkKeyVoteb(iTargetBlock, sofarSum, blocks, total, inludeChecker)){
+            result[iTargetBlock]++;
+        }
+        for(int i = index; i < blocks.size(); i++)
+        {
+            // If the coalition is going to win regardless of the target block, stop recursion.
+            if(i == iTargetBlock){
+                // Use inludeChecker to check if the sofar coalition include the targetblock: 1 for Yes and 0 for No;
+                // The defalut value for inludeChecker is 0, until it reaches iTargetBlock AND choose it.
+                inludeChecker = 1;
+                if(float(sofarSum) > total * 1.0 / 2.0)
+                    return;
+            }
+            computePowerIndexesRec(blocks, i + 1, iTargetBlock, sofarSum + blocks.get(i), inludeChecker, result, total);
+             // If the coalition does not include the target block, stop recursion.
+             if(i == iTargetBlock){
+                 inludeChecker = 0;
+                 return;
+             }
+        }
+}
+
+// This function receives a int Vector representing blocks and returns
+// a Vector containing the power index of each block.
+// More importantly, this version avoids stroring the sofar Vector.
+Vector<int> computePowerIndexes(Vector<int>& blocks)
+{
+    Vector<int> result(blocks.size(), 0);
+    int total = sumOfVector(blocks, 0, blocks.size() - 1);
+    for(int iTargetBlock = 0; iTargetBlock < blocks.size(); iTargetBlock++){
+        int sofarSum = 0;
+        int index = 0;
+        int inludeChecker = 0;
+        // Use iCopy to check if there is any previous blocks[i] with the same count as target block.
+        // If Yes, iCopy=i, and copy result[i] to result[iTargetBlock]
+        int iCopy = blocks.size();
+        for(int i = 0; i < iTargetBlock; i++){
+            if(blocks[iTargetBlock] == blocks[i])
+            {
+                iCopy = i;
+                break;
+            }
+        }
+        // Avoid repeated calculation
+        if(iCopy != blocks.size()){
+            result[iTargetBlock] = result[iCopy];
+        }
+        else{
+            computePowerIndexesRec(blocks, index, iTargetBlock, sofarSum, inludeChecker, result, total);
+        }
+    }
+    // convert the index to percent form
+    int sumResult = sumOfVector(result, 0, result.size() - 1 );
+    if(sumResult == 0)
+        return result;
+    for(int i = 0; i < result.size(); i++){
+        result[i] = result[i] * 100 / sumResult ;
+    }
+    return result;
+}
+#endif
+
+
 
 
 /* * * * * * Test Cases * * * * * */
