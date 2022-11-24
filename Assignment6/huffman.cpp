@@ -7,6 +7,7 @@
 #include "strlib.h"
 #include "testing/SimpleTest.h"
 #include "set.h"
+#include "stack.h"
 using namespace std;
 
 /**
@@ -109,8 +110,7 @@ string decompress(EncodedData& data) {
  *
  */
 EncodingTreeNode* buildHuffmanTree(string text) {
-
-
+    void auxBuildHuffmanTree(PriorityQueue<char>& charPQ, Map<char, int>& charMap, Map<char, EncodingTreeNode*>& charPtr);
     Map<char, int> charWeightMap;
     // calculate the weight of each character
     for(int i = 0; i < text.size(); i++){
@@ -199,13 +199,20 @@ void auxBuildHuffmanTree(PriorityQueue<char>& charPQ, Map<char, int>& charWeight
  * encoding for every character in the text.
  *
  */
-Queue<Bit> encodeText(EncodingTreeNode* tree, string text) {
-    Queue<Bit> result;
 
+#define vector_ver
+
+#ifdef stack_ver
+// This Version uses stack to store the Sequence
+Queue<Bit> encodeText(EncodingTreeNode* tree, string text) {
+    void  traverseTree(EncodingTreeNode* tree, Map<char, Stack<Bit>>& charBitSequence, Stack<Bit>& curSequence);
+    Queue<Bit> result;
     // get the map between char and sequence
     Map<char, Stack<Bit>> bitSequenceMap;
     Stack<Bit> curSequence;
+
     traverseTree(tree, bitSequenceMap, curSequence);
+
 
     //add the sequence to the final queue
     for(int i = 0; i < text.size(); i++){
@@ -250,7 +257,57 @@ void  traverseTree(EncodingTreeNode* tree, Map<char, Stack<Bit>>& bitSequenceMap
 
     }
 }
+#endif
 
+#ifdef vector_ver
+// This Version uses vector to store the Sequence
+Queue<Bit> encodeText(EncodingTreeNode* tree, string text) {
+    void  traverseTree(EncodingTreeNode* tree, Map<char, Vector<Bit>>& bitSequenceMap, Vector<Bit>& curSequence);
+    Queue<Bit> result;
+
+    // get the map between char and sequence
+    Map<char, Vector<Bit>> bitSequenceMap;
+    Vector<Bit> curSequence;
+    traverseTree(tree, bitSequenceMap, curSequence);
+
+    //add the sequence to the final queue
+    for(int i = 0; i < text.size(); i++){
+        int sequenceSize = bitSequenceMap[text.at(i)].size();
+
+        for(int j = 0; j < sequenceSize; j++){
+            result.enqueue(bitSequenceMap[text.at(i)].get(j));
+        }
+    }
+    return result;
+
+}
+
+// This function traverses a tree and builds a map
+// that associates each character with its encoded bit sequence.
+void  traverseTree(EncodingTreeNode* tree, Map<char, Vector<Bit>>& bitSequenceMap, Vector<Bit>& curSequence){
+    EncodingTreeNode* cur = tree;
+    //base case
+    if(cur->isLeaf()){
+        bitSequenceMap[cur->getChar()] = curSequence;
+    }
+    else{
+        //choose right
+        curSequence.add(1);
+        traverseTree(tree->one, bitSequenceMap, curSequence);
+        //unchoose
+        curSequence.remove(curSequence.size() - 1);
+
+        //choose left
+        curSequence.add(0);
+        traverseTree(tree->zero, bitSequenceMap, curSequence);
+        //unchoose
+        curSequence.remove(curSequence.size() - 1);
+
+    }
+}
+
+
+#endif
 /**
  * Flatten the given tree into a Queue<Bit> and Queue<char> in the manner
  * specified in the assignment writeup.
@@ -460,7 +517,8 @@ STUDENT_TEST("decodeText, single node tree") {
     deallocateTree(tree);
 }
 
-STUDENT_TEST("traverseTree, small example ") {
+#ifdef stack_ver
+STUDENT_TEST("traverseTree: stack version, small example ") {
     EncodingTreeNode* tree = createExampleTree(); // see diagram above
 
     Map<char, Stack<Bit>> bitSequenceMap;
@@ -479,6 +537,30 @@ STUDENT_TEST("traverseTree, small example ") {
     deallocateTree(tree);
 
 }
+#endif
+
+#ifdef vector_ver
+STUDENT_TEST("traverseTree: stack version, small example ") {
+    EncodingTreeNode* tree = createExampleTree(); // see diagram above
+
+    Map<char, Vector<Bit>> bitSequenceMap;
+    Vector<Bit> curSequence;
+    traverseTree(tree, bitSequenceMap, curSequence);
+
+    Map<char, Vector<Bit>> correctMap;
+    correctMap.put('E',{1, 1});
+    correctMap.put('T',{0});
+    correctMap.put('R',{1, 0, 0});
+    correctMap.put('S',{1, 0, 1});
+
+
+    EXPECT_EQUAL(bitSequenceMap, correctMap);
+
+    deallocateTree(tree);
+
+}
+#endif
+
 STUDENT_TEST("auxBuildHuffmanTree, small example"){
     Map<char, int> charWeightMap;
     charWeightMap.put('R', 1);
